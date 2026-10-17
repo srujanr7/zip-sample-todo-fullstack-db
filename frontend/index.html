@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Todos</title>
+<style>body{font-family:system-ui;max-width:520px;margin:40px auto;padding:0 16px}form{display:flex;gap:8px}input{flex:1;padding:10px}button{padding:10px 16px}li{padding:8px 0;border-bottom:1px solid #eee}</style></head>
+<body><h1>Todos</h1><form id="f"><input id="t" placeholder="What needs doing?" required><button>Add</button></form><p id="err" style="color:#c00"></p><ul id="list"></ul>
+<script>
+const API = "https://prod-main-api-5f3f02-00ydnvp4r4q.compute.instacloud-edge.com/api/todos";
+async function load(){ try{ const r=await fetch(API); if(!r.ok) throw new Error("Request failed ("+r.status+")"); const rows=await r.json();
+  document.getElementById("list").innerHTML=""; rows.forEach(x=>{const li=document.createElement("li"); li.textContent=x.title; document.getElementById("list").appendChild(li);});
+  document.getElementById("err").textContent=""; }catch(e){ document.getElementById("err").textContent=e.message; } }
+document.getElementById("f").addEventListener("submit", async (e)=>{ e.preventDefault(); const t=document.getElementById("t");
+  const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({title:t.value})});
+  if(!r.ok){ document.getElementById("err").textContent="Could not add ("+r.status+")"; return; } t.value=""; load(); });
+load();
+</script></body></html>
